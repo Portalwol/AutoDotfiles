@@ -1,12 +1,12 @@
 **This fork is the same configs as Dantee's But with sh scripts for automatic Installation. Currently I have only have Ubuntu and Arch sh scripts.**
 
 
-**Arch Install Guide**
+**Arch Install Guide And Arch Based Distros Like Manjaro**
 
 git clone https://github.com/Portalwol/AutoDotfiles && cd AutoDotfiles
 bash ./ArchInstall.sh
 
-**Ubuntu Install Guide**
+**Ubuntu Install Guide And Ubuntu Based Distros Like Linux Mint**
 
 git clone https://github.com/Portalwol/AutoDotfiles && cd AutoDotfiles
 bash ./UbuntuInstall.sh
