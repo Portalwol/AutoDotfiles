@@ -13,4 +13,4 @@ bash ./UbuntuInstall.sh
 
 If you have questions about the install script's Make an issue or smth ill respond soonest possible.
 
-Enjoy 
+Enjoy the sh scripts 
