@@ -3,7 +3,7 @@ cg="\033[1;32m"
 cb="\033[1;34m"
 printf "${cr}[*] Proceeding Will Overwrite Your Current Awesome Config, Make a Backup If your Not Sure About This.\n"
 printf "${cg}[*] Installing dependencies\n"
-sudo pacman -S --needed awesome rofi feh flameshot mousepad arc-icon-theme kitty lm_sensors
+sudo pacman -S --needed awesome rofi feh flameshot mousepad arc-icon-theme kitty lm_sensors pamixer
 printf "${cg}[*] Copying Dotfiles\n"
 printf "${cb} [*] Copying Configs\n"
 cp -r config/* ~/.config
