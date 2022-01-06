@@ -1,4 +1,4 @@
-**This fork is the same configs as Dantee's But with sh scripts for automatic Installation. We currently only have Ubuntu and Arch sh scripts.**
+**This fork is the same configs as Dantee's But with sh scripts for automatic Installation. Currently I have only have Ubuntu and Arch sh scripts.**
 
 
 **Arch Install Guide**
