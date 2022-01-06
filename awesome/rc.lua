@@ -17,6 +17,7 @@ local awful         = require("awful")
 local wibox         = require("wibox")
 local beautiful     = require("beautiful")
 local naughty       = require("naughty")
+local lain          = require("lain")
 local hotkeys_popup = require("awful.hotkeys_popup")
                       require("awful.hotkeys_popup.keys")
 local mytable       = awful.util.table or gears.table -- 4.{0,1} compatibility
@@ -48,6 +49,7 @@ awful.spawn.with_shell(
 local modkey       = "Mod4"
 local altkey       = "Mod1"
 local terminal     = "kitty"
+local vi_focus     = false
 local cycle_prev   = true
 local editor       = "atom"
 
@@ -99,6 +101,18 @@ screen.connect_signal("property::geometry", function(s)
     end
 end)
 
+-- No borders when rearranging only 1 non-floating or maximized client
+screen.connect_signal("arrange", function (s)
+    local only_one = #s.tiled_clients == 1
+    for _, c in pairs(s.clients) do
+        if only_one and not c.floating or c.maximized or c.fullscreen then
+            c.border_width = 0
+        else
+            c.border_width = beautiful.border_width
+        end
+    end
+end)
+
 -- Create a wibox for each screen and add it
  awful.screen.connect_for_each_screen(function(s) beautiful.at_screen_connect(s) end)
 
@@ -130,6 +144,17 @@ globalkeys = mytable.join(
     awful.key({ modkey,           }, "w", function () awful.util.spawn('rofi -show') end,
               {description = "show main menu", group = "awesome"}),
 
+    -- Show/hide wibox
+    awful.key({ modkey }, "b", function ()
+            for s in screen do
+                s.mywibox.visible = not s.mywibox.visible
+                if s.mybottomwibox then
+                    s.mybottomwibox.visible = not s.mybottomwibox.visible
+                end
+            end
+        end,
+        {description = "toggle wibox", group = "awesome"}),
+
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
@@ -155,38 +180,27 @@ globalkeys = mytable.join(
     -- ALSA volume control
     awful.key({ altkey }, "Up",
         function ()
-            os.execute(string.format("pamixer -i 5", beautiful.volume.channel))
-            beautiful.volume.update()
+            os.execute(string.format("pamixer -i 5"))            
         end,
         {description = "volume up", group = "hotkeys"}),
     awful.key({ altkey }, "Down",
         function ()
-            os.execute(string.format("pamixer -d 5", beautiful.volume.channel))
-            beautiful.volume.update()
+            os.execute(string.format("pamixer -d 5"))
         end,
         {description = "volume down", group = "hotkeys"}),
     awful.key({ altkey }, "m",
         function ()
-            os.execute(string.format("pamixer -t", beautiful.volume.togglechannel or beautiful.volume.channel))
-            beautiful.volume.update()
+            os.execute(string.format("pamixer -t"))
         end,
         {description = "toggle mute", group = "hotkeys"}),
 
-    -- Default
-    --[[ rofi
-    awful.key({ modkey }, "x", function ()
-            os.execute(string.format("rofi -show %s -theme %s",
-            'run', 'dmenu'))
-        end,
-        {description = "show rofi", group = "launcher"}),
-    --]]
     -- Prompt
     awful.key({ modkey }, "r", function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"})
 )
 
-    clientkeys = mytable.join(
-        awful.key({ modkey,           }, "f",
+clientkeys = mytable.join(    
+    	 awful.key({ modkey,           }, "f",
             function (c)
                 c.fullscreen = not c.fullscreen
                 c:raise()
@@ -289,9 +303,11 @@ awful.rules.rules = {
       properties = { border_width = beautiful.border_width,
                      border_color = beautiful.border_normal,
                      focus = awful.client.focus.filter,
+                     raise = true,
                      keys = clientkeys,
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
+                     placement = awful.placement.no_overlap+awful.placement.no_offscreen,
                      size_hints_honor = false
      }
     },
